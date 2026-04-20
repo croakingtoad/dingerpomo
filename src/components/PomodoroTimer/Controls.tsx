@@ -5,6 +5,8 @@ interface ControlsProps {
   onToggle: () => void;
   onReset: () => void;
   onSkip: () => void;
+  onUndo: () => void;
+  canUndo: boolean;
 }
 
 function ResetIcon(): React.ReactElement {
@@ -56,7 +58,27 @@ function SkipIcon(): React.ReactElement {
   );
 }
 
-export function Controls({ isRunning, onToggle, onReset, onSkip }: ControlsProps): React.ReactElement {
+function UndoIcon(): React.ReactElement {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M3 7a5 5 0 1 1 .9 2.9"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <polyline
+        points="3,4 3,7 6,7"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function Controls({ isRunning, onToggle, onReset, onSkip, onUndo, canUndo }: ControlsProps): React.ReactElement {
   return (
     <div className="dinger-controls" role="group" aria-label="Timer controls">
       <button
@@ -77,11 +99,12 @@ export function Controls({ isRunning, onToggle, onReset, onSkip }: ControlsProps
       </button>
       <button
         className="dinger-btn dinger-btn-secondary"
-        onClick={onSkip}
-        aria-label="Skip to next session"
-        title="Skip"
+        onClick={canUndo ? onUndo : onSkip}
+        aria-label={canUndo ? 'Undo skip' : 'Skip to next session'}
+        title={canUndo ? 'Undo skip (8s)' : 'Skip'}
+        style={canUndo ? { color: 'var(--dinger-work)', opacity: 1 } : undefined}
       >
-        <SkipIcon />
+        {canUndo ? <UndoIcon /> : <SkipIcon />}
       </button>
     </div>
   );

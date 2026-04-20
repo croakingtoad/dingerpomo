@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useReducer, useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import {
   TimerMode,
   TimerState,
@@ -24,7 +24,8 @@ type TimerAction =
   | { type: 'TOGGLE' }
   | { type: 'RESET'; totalSeconds: number }
   | { type: 'NEXT_MODE'; mode: TimerMode; totalSeconds: number; round: number }
-  | { type: 'SET_MODE'; mode: TimerMode; totalSeconds: number };
+  | { type: 'SET_MODE'; mode: TimerMode; totalSeconds: number }
+  | { type: 'RESTORE'; snapshot: TimerState };
 
 function timerReducer(state: TimerState, action: TimerAction): TimerState {
   switch (action.type) {
@@ -61,6 +62,9 @@ function timerReducer(state: TimerState, action: TimerAction): TimerState {
         isRunning: false,
       };
 
+    case 'RESTORE':
+      return { ...action.snapshot };
+
     default:
       return state;
   }
@@ -86,6 +90,11 @@ export function usePomodoro({ storageKey = 'dingerpomo', onSessionComplete }: Us
 
   // Track session start time
   const sessionStartRef = useRef<number>(Date.now());
+
+  // Undo skip — snapshot valid for 8 seconds
+  const [canUndo, setCanUndo] = useState(false);
+  const undoSnapshotRef = useRef<TimerState | null>(null);
+  const undoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep config ref for use inside callbacks without stale closure
   const configRef = useRef(config);
@@ -191,6 +200,15 @@ export function usePomodoro({ storageKey = 'dingerpomo', onSessionComplete }: Us
     const cfg = configRef.current;
     const cur = stateRef.current;
 
+    // Snapshot current state for undo
+    undoSnapshotRef.current = { ...cur };
+    setCanUndo(true);
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
+    undoTimeoutRef.current = setTimeout(() => {
+      setCanUndo(false);
+      undoSnapshotRef.current = null;
+    }, 8000);
+
     let nextMode: TimerMode;
     let nextRound = cur.round;
 
@@ -214,6 +232,15 @@ export function usePomodoro({ storageKey = 'dingerpomo', onSessionComplete }: Us
         : cfg.longBreakDuration;
 
     dispatch({ type: 'NEXT_MODE', mode: nextMode, totalSeconds: nextDuration, round: nextRound });
+    sessionStartRef.current = Date.now();
+  }, []);
+
+  const undoSkip = useCallback(() => {
+    if (!undoSnapshotRef.current) return;
+    dispatch({ type: 'RESTORE', snapshot: undoSnapshotRef.current });
+    undoSnapshotRef.current = null;
+    setCanUndo(false);
+    if (undoTimeoutRef.current) clearTimeout(undoTimeoutRef.current);
     sessionStartRef.current = Date.now();
   }, []);
 
@@ -266,6 +293,8 @@ export function usePomodoro({ storageKey = 'dingerpomo', onSessionComplete }: Us
     toggle,
     reset,
     skip,
+    undoSkip,
+    canUndo,
     updateConfig,
     todayStats,
     weeklyData,

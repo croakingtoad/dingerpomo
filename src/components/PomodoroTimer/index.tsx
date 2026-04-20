@@ -37,6 +37,8 @@ export function PomodoroTimer({
     toggle,
     reset,
     skip,
+    undoSkip,
+    canUndo,
     updateConfig,
     todayStats,
     weeklyData,
@@ -117,6 +119,8 @@ export function PomodoroTimer({
         onToggle={toggle}
         onReset={reset}
         onSkip={skip}
+        onUndo={undoSkip}
+        canUndo={canUndo}
       />
 
       {/* Tab bar */}
