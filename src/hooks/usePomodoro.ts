@@ -11,6 +11,8 @@ import {
   saveConfig,
   loadSessions,
   saveSession,
+  loadTimerState,
+  saveTimerState,
   getSessionsForDate,
   getStreak,
   getWeeklyData,
@@ -78,15 +80,17 @@ export function usePomodoro({ storageKey = 'dingerpomo', onSessionComplete }: Us
   const [config, setConfig] = useConfigState(storageKey);
   const [sessions, setSessions] = useSessionsState(storageKey);
 
-  const initialState: TimerState = {
-    mode: 'work',
-    secondsLeft: config.workDuration,
-    totalSeconds: config.workDuration,
-    isRunning: false,
-    round: 1,
-  };
-
-  const [state, dispatch] = useReducer(timerReducer, initialState);
+  const [state, dispatch] = useReducer(timerReducer, undefined, () => {
+    const saved = loadTimerState(storageKey);
+    if (saved) return saved;
+    return {
+      mode: 'work' as TimerMode,
+      secondsLeft: config.workDuration,
+      totalSeconds: config.workDuration,
+      isRunning: false,
+      round: 1,
+    };
+  });
 
   // Track session start time
   const sessionStartRef = useRef<number>(Date.now());
@@ -102,6 +106,11 @@ export function usePomodoro({ storageKey = 'dingerpomo', onSessionComplete }: Us
 
   const stateRef = useRef(state);
   stateRef.current = state;
+
+  // ── Persist timer state on every change ──
+  useEffect(() => {
+    saveTimerState(storageKey, state);
+  }, [state, storageKey]);
 
   // ── Tick effect ──
   useEffect(() => {

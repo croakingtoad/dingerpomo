@@ -1,4 +1,13 @@
-import { PomodoroConfig, PomodoroSession, DEFAULT_CONFIG } from './types';
+import { PomodoroConfig, PomodoroSession, TimerState, TimerMode, DEFAULT_CONFIG } from './types';
+
+interface PersistedTimerState {
+  mode: TimerMode;
+  secondsLeft: number;
+  totalSeconds: number;
+  round: number;
+  isRunning: boolean;
+  savedAt: number;
+}
 
 export function loadConfig(key: string): PomodoroConfig {
   try {
@@ -36,6 +45,41 @@ export function saveSession(key: string, session: PomodoroSession): void {
     // Keep last 1000 sessions to bound storage size
     const trimmed = existing.slice(-1000);
     localStorage.setItem(`${key}:sessions`, JSON.stringify(trimmed));
+  } catch {
+    // localStorage unavailable
+  }
+}
+
+export function loadTimerState(key: string): TimerState | null {
+  try {
+    const raw = localStorage.getItem(`${key}:timerState`);
+    if (!raw) return null;
+    const saved = JSON.parse(raw) as PersistedTimerState;
+
+    let secondsLeft = saved.secondsLeft;
+
+    // If it was running when saved, subtract elapsed time so the clock is correct
+    if (saved.isRunning) {
+      const elapsed = Math.floor((Date.now() - saved.savedAt) / 1000);
+      secondsLeft = Math.max(0, saved.secondsLeft - elapsed);
+    }
+
+    return {
+      mode: saved.mode,
+      secondsLeft,
+      totalSeconds: saved.totalSeconds,
+      round: saved.round,
+      isRunning: false, // always restore paused — user resumes deliberately
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function saveTimerState(key: string, state: TimerState): void {
+  try {
+    const persisted: PersistedTimerState = { ...state, savedAt: Date.now() };
+    localStorage.setItem(`${key}:timerState`, JSON.stringify(persisted));
   } catch {
     // localStorage unavailable
   }
