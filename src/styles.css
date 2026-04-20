@@ -33,9 +33,10 @@
 
 .dinger-widget-floating {
   position: fixed;
-  bottom: 24px;
+  top: 24px;
   right: 24px;
   z-index: 9999;
+  width: fit-content;
 }
 
 .dinger-widget-inline {
@@ -52,6 +53,7 @@
   justify-content: center;
   position: relative;
   outline: none;
+  width: fit-content;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
