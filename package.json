@@ -1,0 +1,53 @@
+{
+  "name": "dingerpomo",
+  "version": "0.1.0",
+  "description": "A Pomodoro timer React component with session history, stats, and a floating widget — named for the railroad yardmaster who rings the bell",
+  "license": "MIT",
+  "author": "croakingtoad",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/croakingtoad/dingerpomo"
+  },
+  "keywords": [
+    "pomodoro",
+    "timer",
+    "react",
+    "component",
+    "productivity"
+  ],
+  "type": "module",
+  "main": "./dist/dingerpomo.umd.cjs",
+  "module": "./dist/dingerpomo.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/dingerpomo.js",
+      "require": "./dist/dingerpomo.umd.cjs",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./dist/dingerpomo.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "build:types": "tsc --noEmit",
+    "dev": "vite build --watch",
+    "lint": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
+  "devDependencies": {
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^4",
+    "react": "^18",
+    "react-dom": "^18",
+    "typescript": "^5",
+    "vite": "^5",
+    "vite-plugin-dts": "^3"
+  }
+}

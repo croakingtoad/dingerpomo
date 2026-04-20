@@ -1,0 +1,421 @@
+/* ── CSS Custom Properties ─────────────────────────────────────────────────── */
+:root {
+  --dinger-bg: #18181b;
+  --dinger-surface: #27272a;
+  --dinger-border: #3f3f46;
+  --dinger-text: #f4f4f5;
+  --dinger-text-muted: #a1a1aa;
+  --dinger-work: #ef4444;
+  --dinger-short-break: #22c55e;
+  --dinger-long-break: #3b82f6;
+  --dinger-radius: 12px;
+  --dinger-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Widget Shell ──────────────────────────────────────────────────────────── */
+.dinger-widget {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 13px;
+  color: var(--dinger-text);
+  background: var(--dinger-bg);
+  border: 1px solid var(--dinger-border);
+  border-radius: var(--dinger-radius);
+  box-shadow: var(--dinger-shadow);
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.dinger-widget *,
+.dinger-widget *::before,
+.dinger-widget *::after {
+  box-sizing: border-box;
+}
+
+.dinger-widget-floating {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+}
+
+.dinger-widget-inline {
+  position: relative;
+  display: inline-block;
+}
+
+/* ── Collapsed State ───────────────────────────────────────────────────────── */
+.dinger-collapsed {
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  outline: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dinger-collapsed:hover {
+  transform: scale(1.04);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dinger-collapsed:focus-visible {
+  outline: 2px solid var(--dinger-work);
+  outline-offset: 2px;
+}
+
+.dinger-running-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dinger-work);
+  animation: dinger-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dinger-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* ── Expanded State ────────────────────────────────────────────────────────── */
+.dinger-expanded {
+  width: 220px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Header ────────────────────────────────────────────────────────────────── */
+.dinger-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dinger-mode-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dinger-mode-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--dinger-text-muted);
+  text-transform: uppercase;
+}
+
+.dinger-round-badge {
+  font-size: 11px;
+  color: var(--dinger-text-muted);
+  min-width: 24px;
+}
+
+/* ── Dial ──────────────────────────────────────────────────────────────────── */
+.dinger-dial-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.dinger-dial {
+  display: block;
+}
+
+/* ── Controls ──────────────────────────────────────────────────────────────── */
+.dinger-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dinger-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+  line-height: 1;
+  color: var(--dinger-text);
+}
+
+.dinger-btn:focus-visible {
+  outline: 2px solid var(--dinger-work);
+  outline-offset: 2px;
+}
+
+.dinger-btn:active {
+  transform: scale(0.93);
+}
+
+.dinger-btn-primary {
+  width: 44px;
+  height: 44px;
+  background: var(--dinger-surface);
+  border: 1px solid var(--dinger-border);
+}
+
+.dinger-btn-primary:hover {
+  background: #3f3f46;
+}
+
+.dinger-btn-secondary {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: var(--dinger-text-muted);
+}
+
+.dinger-btn-secondary:hover {
+  background: var(--dinger-surface);
+  color: var(--dinger-text);
+}
+
+.dinger-btn-close {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  color: var(--dinger-text-muted);
+  border-radius: 6px;
+}
+
+.dinger-btn-close:hover {
+  background: var(--dinger-surface);
+  color: var(--dinger-text);
+}
+
+/* ── Tabs ──────────────────────────────────────────────────────────────────── */
+.dinger-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--dinger-border);
+  gap: 0;
+}
+
+.dinger-tab {
+  flex: 1;
+  padding: 6px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--dinger-text-muted);
+  transition: color 0.15s ease, border-color 0.15s ease;
+  margin-bottom: -1px;
+}
+
+.dinger-tab:hover {
+  color: var(--dinger-text);
+}
+
+.dinger-tab-active {
+  color: var(--dinger-text);
+  border-bottom-color: var(--dinger-work);
+}
+
+.dinger-tab-panel {
+  min-height: 80px;
+}
+
+/* ── Stats ─────────────────────────────────────────────────────────────────── */
+.dinger-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.dinger-stats-today {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.dinger-stats-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dinger-text);
+}
+
+.dinger-stats-label {
+  font-size: 12px;
+  color: var(--dinger-text-muted);
+}
+
+.dinger-stats-dot {
+  color: var(--dinger-border);
+  font-size: 12px;
+  margin: 0 2px;
+}
+
+.dinger-streak {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--dinger-text-muted);
+}
+
+/* ── Heatmap ───────────────────────────────────────────────────────────────── */
+.dinger-heatmap {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.dinger-heat-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+}
+
+.dinger-heat-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--dinger-border);
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.dinger-heat-0 {
+  background: var(--dinger-border);
+  opacity: 0.5;
+}
+
+.dinger-heat-label {
+  font-size: 9px;
+  color: var(--dinger-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Settings ──────────────────────────────────────────────────────────────── */
+.dinger-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.dinger-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.dinger-toggle-row {
+  cursor: pointer;
+}
+
+.dinger-setting-label {
+  font-size: 12px;
+  color: var(--dinger-text-muted);
+  flex: 1;
+}
+
+.dinger-input {
+  width: 52px;
+  padding: 3px 6px;
+  background: var(--dinger-surface);
+  border: 1px solid var(--dinger-border);
+  border-radius: 6px;
+  color: var(--dinger-text);
+  font-size: 12px;
+  text-align: right;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.dinger-input::-webkit-outer-spin-button,
+.dinger-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.dinger-input:focus {
+  border-color: var(--dinger-work);
+}
+
+.dinger-settings-divider {
+  height: 1px;
+  background: var(--dinger-border);
+  margin: 2px 0;
+}
+
+/* ── Toggle Switch ─────────────────────────────────────────────────────────── */
+.dinger-toggle {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--dinger-border);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.dinger-toggle-on {
+  background: var(--dinger-work);
+}
+
+.dinger-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s ease;
+  display: block;
+}
+
+.dinger-toggle-on .dinger-toggle-thumb {
+  transform: translateX(14px);
+}
+
+/* ── Volume Slider ─────────────────────────────────────────────────────────── */
+.dinger-slider {
+  flex: 1;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--dinger-border);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  max-width: 80px;
+}
+
+.dinger-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dinger-text);
+  cursor: pointer;
+}
+
+.dinger-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dinger-text);
+  cursor: pointer;
+  border: none;
+}
