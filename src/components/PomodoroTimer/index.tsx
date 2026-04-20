@@ -43,9 +43,12 @@ export function PomodoroTimer({
     streak,
   } = usePomodoro({ storageKey, onSessionComplete });
 
+  const floatingStyle: React.CSSProperties = floating
+    ? { position: 'fixed', top: 24, right: 24, zIndex: 9999, width: 'fit-content' }
+    : { position: 'relative', display: 'inline-block' };
+
   const wrapperClass = [
     'dinger-widget',
-    floating ? 'dinger-widget-floating' : 'dinger-widget-inline',
     expanded ? 'dinger-expanded' : 'dinger-collapsed',
   ]
     .filter(Boolean)
@@ -55,6 +58,7 @@ export function PomodoroTimer({
     return (
       <div
         className={wrapperClass}
+        style={floatingStyle}
         onClick={() => setExpanded(true)}
         role="button"
         tabIndex={0}
@@ -79,7 +83,7 @@ export function PomodoroTimer({
   }
 
   return (
-    <div className={wrapperClass} role="dialog" aria-label="Pomodoro timer">
+    <div className={wrapperClass} style={floatingStyle} role="dialog" aria-label="Pomodoro timer">
       {/* Header row */}
       <div className="dinger-header">
         <div className="dinger-mode-info">
